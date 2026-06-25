@@ -11,13 +11,27 @@ const loginUser = catchAsync(
     res: Response,
     next: NextFunction,
   ) => {
-    const loginResult = await authService.loginUser(req.body);
+    const { accessToken, refreshToken } = await authService.loginUser(req.body);
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     sendResponse(res, {
       success: true,
       statusCode: status.OK,
       message: "Login succesfull",
-      data: loginResult,
+      data: { accessToken, refreshToken },
     });
   },
 );
