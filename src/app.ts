@@ -4,6 +4,8 @@ import type { Application } from "express";
 import express from "express";
 import config from "./config";
 import { authRoutes } from "./modules/auth/auth.route";
+import { commentRoutes } from "./modules/comment/comment.route";
+import { postRoutes } from "./modules/post/post.route";
 import { userRoutes } from "./modules/user/user.route";
 
 const app: Application = express();
@@ -25,5 +27,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/posts", postRoutes);
+app.use("/api/comments", commentRoutes);
 
 export default app;
