@@ -16,7 +16,29 @@ const getAllPosts = async () => {
 
 const getPostsStats = async () => {};
 
-const getMyPosts = async () => {};
+const getMyPosts = async (authorId: string) => {
+  return await prisma.post.findMany({
+    where: {
+      authorId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      comments: true,
+      author: {
+        omit: {
+          password: true,
+        },
+      },
+      _count: {
+        select: {
+          comments: true,
+        },
+      },
+    },
+  });
+};
 
 const getPostById = async (postId: string) => {
   const updatedPost = await prisma.post.update({
