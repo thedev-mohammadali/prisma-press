@@ -8,3 +8,7 @@ export interface ICreatePostPayload {
   status?: PostStatus;
   tags: string[];
 }
+
+export interface GetPostParams {
+  postId: string;
+}

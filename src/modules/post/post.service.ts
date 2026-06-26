@@ -18,7 +18,28 @@ const getPostsStats = async () => {};
 
 const getMyPosts = async () => {};
 
-const getPostById = async () => {};
+const getPostById = async (postId: string) => {
+  const updatedPost = await prisma.post.update({
+    where: {
+      id: postId,
+    },
+    data: {
+      views: {
+        increment: 1,
+      },
+    },
+    include: {
+      author: {
+        omit: {
+          password: true,
+        },
+      },
+      comments: true,
+    },
+  });
+
+  return updatedPost;
+};
 
 const createPost = async (payload: ICreatePostPayload, userId: string) => {
   return await prisma.post.create({
