@@ -7,6 +7,17 @@ const getCommentsByAuthorId = async (authorId: string) => {
     where: {
       authorId,
     },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      post: {
+        select: {
+          id: true,
+          title: true,
+        },
+      },
+    },
   });
 };
 
@@ -15,11 +26,23 @@ const getCommentById = async (commentId: string) => {
     where: {
       id: commentId,
     },
+    include: {
+      post: {
+        select: {
+          id: true,
+          title: true,
+          views: true,
+        },
+      },
+    },
   });
 };
 
 const createComment = async (payload: ICommentPayload, authorId: string) => {
   const { content, postId } = payload;
+
+  await prisma.post.findUniqueOrThrow({ where: { id: postId } });
+
   return prisma.comment.create({
     data: {
       content,
