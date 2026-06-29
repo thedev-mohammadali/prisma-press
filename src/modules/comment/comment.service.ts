@@ -1,13 +1,26 @@
+import { CommentStatus } from "../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 import type { ICommentPayload } from "./comment.interface";
 
-const getCommentsByAuthorId = async () => {};
+const getCommentsByAuthorId = async (authorId: string) => {
+  return await prisma.comment.findMany({
+    where: {
+      authorId,
+    },
+  });
+};
 
-const getCommentById = async () => {};
+const getCommentById = async (commentId: string) => {
+  return prisma.comment.findUniqueOrThrow({
+    where: {
+      id: commentId,
+    },
+  });
+};
 
 const createComment = async (payload: ICommentPayload, authorId: string) => {
   const { content, postId } = payload;
-  const result = await prisma.comment.create({
+  return prisma.comment.create({
     data: {
       content,
       postId,
@@ -21,19 +34,40 @@ const createComment = async (payload: ICommentPayload, authorId: string) => {
       status: true,
     },
   });
-
-  if (!result) {
-    throw new Error("Something Went wrong creating comment");
-  }
-
-  return result;
 };
 
-const updateComment = async () => {};
+const updateComment = async (content: string, commentId: string) => {
+  return prisma.comment.update({
+    where: {
+      id: commentId,
+    },
+    data: {
+      content,
+    },
+  });
+};
 
-const deleteComment = async () => {};
+const deleteComment = async (commentId: string) => {
+  await prisma.comment.delete({
+    where: {
+      id: commentId,
+    },
+  });
+};
 
-const changeCommentStatus = async () => {};
+const changeCommentStatus = async (
+  commentId: string,
+  status: CommentStatus,
+) => {
+  return prisma.comment.update({
+    where: {
+      id: commentId,
+    },
+    data: {
+      status,
+    },
+  });
+};
 
 export const commentService = {
   changeCommentStatus,

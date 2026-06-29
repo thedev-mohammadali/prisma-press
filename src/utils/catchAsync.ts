@@ -11,6 +11,7 @@ const catchAsync = (fn: RequestHandler) => {
         statusCode: status.INTERNAL_SERVER_ERROR,
         message: "Something went wrong",
         error: (error as Error).message,
+        errorStack: (error as Error).stack,
       });
     }
   };
