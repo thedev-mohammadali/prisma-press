@@ -1,9 +1,61 @@
 import { CommentStatus } from "../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
-import type { ICreatePostPayload, IUpdatePostPayload } from "./post.interface";
+import type {
+  ICreatePostPayload,
+  IPostQuery,
+  IUpdatePostPayload,
+} from "./post.interface";
 
-const getAllPosts = async () => {
+const getAllPosts = async (query: IPostQuery) => {
+  const limit = query.limit ? Number(query.limit) : 10;
+  const page = query.page ? Number(query.page) : 1;
+  const skip = (page - 1) * limit;
+  const sortBy = query.sortBy ? query.sortBy : "createdAt";
+  const sortOrder = query.sortOrder ? query.sortOrder : "desc";
+
   return await prisma.post.findMany({
+    where: {
+      AND: [
+        query.searchTerm
+          ? {
+              OR: [
+                {
+                  title: {
+                    contains: query.searchTerm,
+                    mode: "insensitive",
+                  },
+                },
+                {
+                  content: {
+                    contains: query.searchTerm,
+                    mode: "insensitive",
+                  },
+                },
+              ],
+            }
+          : {},
+
+        query.title
+          ? {
+              title: query.title,
+            }
+          : {},
+
+        query.content
+          ? {
+              content: query.content,
+            }
+          : {},
+      ],
+    },
+
+    take: limit,
+    skip: skip,
+
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
+
     include: {
       author: {
         omit: {

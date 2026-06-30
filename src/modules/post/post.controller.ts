@@ -5,18 +5,17 @@ import sendResponse from "../../utils/sendResponse";
 import type { ICreatePostPayload } from "./post.interface";
 import { postService } from "./post.service";
 
-const getAllPosts = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const result = await postService.getAllPosts();
+const getAllPosts = catchAsync(async (req: Request, res: Response) => {
+  const query = req.query;
+  const result = await postService.getAllPosts(query);
 
-    sendResponse(res, {
-      success: true,
-      statusCode: status.OK,
-      message: "Posts retrieved successfully",
-      data: result,
-    });
-  },
-);
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: "Posts retrieved successfully",
+    data: result,
+  });
+});
 
 const getPostsStats = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
